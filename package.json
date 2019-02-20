@@ -1,0 +1,27 @@
+{
+    "name": "MMM-Nightscout",
+    "version": "1.0.0",
+    "description": "Magic Mirror Module - That displays current glucose level from the open source project Nightscout",
+    "main": "MMM-Nightscout.js",
+    "directories": {
+      "doc": "docs"
+    },
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/bureus/MMM-Nightscout.git"
+    },
+    "keywords": [],
+    "author": "bureus",
+    "license": "MIT",
+    "bugs": {
+      "url": "https://github.com/bureus/MMM-Nightscout/issues"
+    },
+    "homepage": "https://github.com/bureus/MMM-Nightscout#readme",
+    "dependencies": {
+      "request-promise": "^4.2.2",
+      "request": "^2.81.0"
+    }
+  }
