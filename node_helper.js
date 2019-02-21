@@ -11,10 +11,11 @@ module.exports = NodeHelper.create({
     // --------------------------------------- Schedule a stands update
     scheduleUpdate: function (lastDate) {
         let self = this;
-        let refreshRate = new Date(Date.now()) - new Date(lastDate).setMinutes(5);
+        //let refreshRate = new Date(Date.now()) - new Date(lastDate).setMinutes(5);
+        //debug("Updating in: "+ refreshRate)
         this.updatetimer = setInterval(function () { // This timer is saved in uitimer so that we can cancel it
             self.update();
-        }, refreshRate);
+        }, 60000);
     },
     // --------------------------------------- Get Nightscout server configs
     getServerConfig: async function(){
@@ -117,6 +118,32 @@ function convertSvgToMmol(sgv){
     return (Math.round((sgv / 18) * 10) / 10).toFixed(1); 
 }
 
+function directionToUnicode(direction){
+    switch(direction) {
+        case 'NONE':
+          return '⇼'
+        case 'DoubleUp':
+          return '⇈'
+        case 'SingleUp':
+          return '↑'
+        case 'FortyFiveUp':
+          return '↗'
+        case 'Flat':
+          return '→'
+        case 'FortyFiveDown':
+          return '↘'
+        case 'SingleDown':
+          return '↓'
+        case 'DoubleDown':
+          return '⇊'
+        case 'RATE OUT OF RANGE':
+          return '⇕'
+        default:
+         return '-';
+      }
+
+}
+
 function generateDto(data, unit){
     debug(JSON.stringify(data));
     return {
@@ -125,7 +152,7 @@ function generateDto(data, unit){
         unit: unit,
         date: data[0].date,
         trend: data[0].trend,
-        direction: data[0].direction
+        direction: directionToUnicode(data[0].direction)
     }
     
 }

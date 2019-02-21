@@ -30,17 +30,18 @@ Module.register("MMM-Nightscout", {
         if (this.glucoseData) {
             let div = document.createElement("div");
             let bs = document.createElement("div");
-            bs.className = "bright large light";
-            bs.innerHTML = this.glucoseData.bs;
+            bs.style = 'display: table;';
+            bs.innerHTML = '<span class="bright large light" style="display: table-cell;vertical-align:middle;">'+this.glucoseData.bs+'</span><span class="bright medium light" style="display: table-cell;vertical-align:middle;">'+this.glucoseData.direction+'</span>';
             div.appendChild(bs);
             let delta = document.createElement("div");
             delta.className = "light small dimmed";
-            delta.innerHTML = this.glucoseData.delta+" "+this.glucoseData.unit;
+            delta.innerHTML = this.glucoseData.delta+" "+(this.glucoseData.unit == "mmol" ? 'mmol/L' : 'mg/dL');
             div.appendChild(delta);
             wrapper.innerHTML = div.outerHTML;
             return wrapper;
         }
     },
+
     // --------------------------------------- Handle socketnotifications
     socketNotificationReceived: function (notification, payload) {
         Log.info("socketNotificationReceived: " + notification + ", payload: " + payload);
