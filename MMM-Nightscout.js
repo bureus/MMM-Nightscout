@@ -19,7 +19,7 @@ Module.register("MMM-Nightscout", {
         Log.info("getDom triggered");
         let wrapper = document.createElement("div");
         if (!this.loaded && !this.failure) {
-            wrapper.innerHTML = "<img style='width: 100px' src='https://avatars3.githubusercontent.com/u/7661012?s=280&v=4'></img><span>Connecting...<span>"
+            wrapper.innerHTML = "<img style='width: 100px' src='https://avatars3.githubusercontent.com/u/7661012?s=280&v=4'></img>"
             return wrapper;
         }
         if (this.failure) {
