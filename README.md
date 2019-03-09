@@ -1,5 +1,5 @@
 # MMM-Nightscout
-[Magic Mirror](https://magicmirror.builders/) Module - Display continuous glucose monitoring on your magic mirror. Powered by [Nightscout](http://www.nightscout.info/)
+[Magic Mirror](https://magicmirror.builders/) Module - Keep track of blood glucose levels with ease thru your magic mirror. Display real time blood glucose levels, with trends and warnings. Powered by [Nightscout](http://www.nightscout.info/)
 
 ## Prerequisites and requirments
 1. You need to have Nightscout enabled CGM 
