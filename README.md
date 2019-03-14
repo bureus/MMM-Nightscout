@@ -34,9 +34,11 @@ modules: [
 Supports both mmol/L and mg/dL
 
 mmol/L
+
 ![Nightscout Module](https://github.com/bureus/MMM-Nightscout/blob/master/docs/screenshot.PNG)
 
 mg/dL
+
 ![Nightscout Module](https://github.com/bureus/MMM-Nightscout/blob/master/docs/screenshot-2.PNG)
 
 
