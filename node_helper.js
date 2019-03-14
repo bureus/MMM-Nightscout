@@ -24,7 +24,7 @@ module.exports = NodeHelper.create({
             if(self.config.baseUrl){
                 let options = {
                     method: 'GET',
-                    uri: this.config.baseUrl+'api/v1/profile'
+                    uri: this.config.baseUrl+'/api/v1/profile'
                 };
 
                 request(options)

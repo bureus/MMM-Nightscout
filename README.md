@@ -23,12 +23,22 @@ modules: [
             position: "top_left",
             config: {
                 debug: true, //Optional: set to true if you want debug logs
-                baseUrl: 'https://nightscout.azurewebsites.net' //Required: Base url to your Nightscout webapplication
+                baseUrl: 'https://nightscout.azurewebsites.net' //Required: Base url to your Nightscout webapplication. Please make sure to not have any traling /
         }
     },
     ...
 ]
 ```
+
+## Configs retrived from Nightscout
+Supports both mmol/L and mg/dL
+
+mmol/L
+![Nightscout Module](https://github.com/bureus/MMM-Nightscout/blob/master/docs/screenshot.PNG)
+
+mg/dL
+![Nightscout Module](https://github.com/bureus/MMM-Nightscout/blob/master/docs/screenshot-2.PNG)
+
 
 ## Screenshot
 
