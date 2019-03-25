@@ -3,7 +3,8 @@ Module.register("MMM-Nightscout", {
     // Default module config.
     defaults: {
         baseUrl: null,
-        debug: false
+        debug: false,
+        colorEnabled: false
     },
 
     start: function () {
@@ -31,7 +32,8 @@ Module.register("MMM-Nightscout", {
             let div = document.createElement("div");
             let bs = document.createElement("div");
             bs.style = 'display: table;';
-            bs.innerHTML = '<span class="bright large light" style="display: table-cell;vertical-align:middle;">'+this.glucoseData.bs+'</span><span class="bright medium light" style="display: table-cell;vertical-align:middle;">'+this.glucoseData.direction+'</span>';
+            let bsStyle = this.config.colorEnabled ? "display: table-cell;vertical-align:middle; color:"+this.glucoseData.fontColor+";" : "display: table-cell;vertical-align:middle;";
+            bs.innerHTML = '<span class="bright large light" style="'+bsStyle+'">'+this.glucoseData.bs+'</span><span class="bright medium light" style="display: table-cell;vertical-align:middle;">'+this.glucoseData.direction+'</span>';
             div.appendChild(bs);
             let delta = document.createElement("div");
             delta.className = "light small dimmed";

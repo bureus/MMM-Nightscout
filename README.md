@@ -24,6 +24,7 @@ modules: [
             config: {
                 debug: true, //Optional: set to true if you want debug logs
                 baseUrl: 'https://nightscout.azurewebsites.net' //Required: Base url to your Nightscout webapplication. Please make sure to not have any traling /
+                colorEnabled: true //Optional: set to true if you want to get colorful bs values. Default is false.  
         }
     },
     ...
@@ -40,6 +41,11 @@ mmol/L
 mg/dL
 
 ![Nightscout Module](https://github.com/bureus/MMM-Nightscout/blob/master/docs/screenshot-2.PNG)
+
+## Color theme
+Set colorEnabled = true to render blood glucose level based on Nightscout thresholds (critical, warning, normal). Default is false. 
+
+![Nightscout Module](https://github.com/bureus/MMM-Nightscout/blob/master/docs/screenshot-3.PNG)
 
 
 ## Screenshot

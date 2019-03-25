@@ -24,14 +24,17 @@ module.exports = NodeHelper.create({
             if(self.config.baseUrl){
                 let options = {
                     method: 'GET',
-                    uri: this.config.baseUrl+'/api/v1/profile'
+                    uri: this.config.baseUrl+'/api/v1/status',
+                    headers: {
+                        "Accept": "application/json"
+                    }
                 };
 
                 request(options)
                 .then(function(body){
                     let config = JSON.parse(body);
-                    debug('getServerConfig: data retrived, units is'+config[0].units);
-                    resolve(config[0].units);
+                    debug('getServerConfig: data retrived, units is'+config.settings.units+', status is: '+config.status);
+                    resolve(config);
                 })
                 .catch(function(error){
                     log('getServerConfig: failed when trying to retrive data: '+error);
@@ -78,10 +81,10 @@ module.exports = NodeHelper.create({
     // --------------------------------------- Init
     update: async function(){
         let self = this;
-        if(self.config.baseUrl && self.config.units){
+        if(self.config.baseUrl && self.config.server.settings.units){
             clearInterval(this.updatetimer); // Clear the timer so that we can set it again
             self.glucoseData = await self.getGlucoseData();
-            let dto = generateDto(self.glucoseData, self.config.units);
+            let dto = generateDto(self.glucoseData, self.config.server.settings.units, self.config.server.settings.thresholds);
             debug(JSON.stringify(dto));
             debug('bs value is: '+dto.bs+' '+dto.unit);
             self.sendSocketNotification("GLUCOSE", dto); // Send glucose data to presentation layer
@@ -95,7 +98,7 @@ module.exports = NodeHelper.create({
     init: async function(){
         let self = this;
         if(self.started && self.config.baseUrl){
-            self.config.units = await self.getServerConfig();
+            self.config.server = await self.getServerConfig();
             await self.update();
         }
     },
@@ -144,7 +147,7 @@ function directionToUnicode(direction){
 
 }
 
-function generateDto(data, unit){
+function generateDto(data, unit, thresholds){
     debug(JSON.stringify(data));
     return {
         bs: unit == 'mmol' ? convertSvgToMmol(data[0].sgv) : data[0].sgv,
@@ -152,9 +155,21 @@ function generateDto(data, unit){
         unit: unit,
         date: data[0].date,
         trend: data[0].trend,
-        direction: directionToUnicode(data[0].direction)
+        direction: directionToUnicode(data[0].direction),
+        fontColor: getFontColor(data[0].sgv, thresholds)
     }
     
+}
+
+//
+function getFontColor(sgv, thresholds){
+    if(sgv >= thresholds.bgHigh || sgv <= thresholds.bgLow){
+        return "#FF3333";
+    }
+    if(sgv <= thresholds.bgTargetTop && sgv >= thresholds.bgTargetBottom ){
+        return "#33FF33";
+    }
+    return "#FFFF33";
 }
 
 // --------------------------------------- At beginning of log entries
