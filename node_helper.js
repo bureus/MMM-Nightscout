@@ -56,7 +56,7 @@ module.exports = NodeHelper.create({
             if(self.config.baseUrl){
                 let options = {
                     method: 'GET',
-                    uri: this.config.baseUrl+'/api/v1/entries.json?count=3'
+                    uri: this.config.baseUrl+'/api/v1/entries.json?count='+(this.config.chartHours*12)
                 };
 
                 request(options)
@@ -84,7 +84,7 @@ module.exports = NodeHelper.create({
         if(self.config.baseUrl && self.config.server.settings.units){
             clearInterval(this.updatetimer); // Clear the timer so that we can set it again
             self.glucoseData = await self.getGlucoseData();
-            let dto = generateDto(self.glucoseData, self.config.server.settings.units, self.config.server.settings.thresholds);
+            let dto = generateDto(self.glucoseData, self.config.server.settings.units, self.config.server.settings.thresholds, self.config.server.settings);
             debug(JSON.stringify(dto));
             debug('bs value is: '+dto.bs+' '+dto.unit);
             self.sendSocketNotification("GLUCOSE", dto); // Send glucose data to presentation layer
@@ -147,7 +147,7 @@ function directionToUnicode(direction){
 
 }
 
-function generateDto(data, unit, thresholds){
+function generateDto(data, unit, thresholds, settings){
     debug(JSON.stringify(data));
     return {
         bs: unit == 'mmol' ? convertSvgToMmol(data[0].sgv) : data[0].sgv,
@@ -156,20 +156,36 @@ function generateDto(data, unit, thresholds){
         date: data[0].date,
         trend: data[0].trend,
         direction: directionToUnicode(data[0].direction),
-        fontColor: getFontColor(data[0].sgv, thresholds)
+        fontColor: getFontColor(data[0].sgv, thresholds),
+        data: getCharDataSet(data, (unit == 'mmol'), thresholds),
+        settings: settings
     }
     
 }
 
 //
-function getFontColor(sgv, thresholds){
+function getFontColor(sgv, thresholds, isChart){
     if(sgv >= thresholds.bgHigh || sgv <= thresholds.bgLow){
-        return "#FF3333";
+        return isChart ? "rgb(255, 0, 0)" : "#FF3333";
     }
     if(sgv <= thresholds.bgTargetTop && sgv >= thresholds.bgTargetBottom ){
-        return "#33FF33";
+        return isChart ? "rgb(76, 255, 0)" : "#33FF33";
     }
-    return "#FFFF33";
+    return isChart ? "rgb(255, 255, 0)" : "#FFFF33";
+}
+
+function getCharDataSet(data, convert, thresholds){
+    debug("getCharDataSet: data set length: "+data.length+", convertSvgToMmol:"+convert);
+    let colorSet = [];
+    let dataSet = [];
+    for(let i = 0; i < data.length; i++){
+        dataSet.push({
+            t : data[i].date,
+            y : convert ? convertSvgToMmol(data[i].sgv) : data[i].sgv
+        });
+        colorSet.push(getFontColor(data[i].sgv, thresholds, true))
+    }
+    return { dataSet : dataSet, colorSet : colorSet };
 }
 
 // --------------------------------------- At beginning of log entries

@@ -24,12 +24,23 @@ modules: [
             config: {
                 debug: true, //Optional: set to true if you want debug logs
                 baseUrl: 'https://nightscout.azurewebsites.net' //Required: Base url to your Nightscout webapplication. Please make sure to not have any traling /
-                colorEnabled: true //Optional: set to true if you want to get colorful bs values. Default is false.  
+                colorEnabled: true //Optional: set to true if you want to get colorful bs values. Default is false.
+                chartWidth: 350,  //Optional: set chart width in px. Default is 350px.
+                chartHeight: 850, //Optional: set char height in px. Default is 850px. 
+                chartHours: 4, //Optional: number of hours that chart tracks. Default is 4. 
+                renderChart: true  //Optional: set to false if you dont want to get a chart. Default is true.
         }
     },
     ...
 ]
 ```
+
+## Chart
+Nightscout similare chart that has fully configurable dimansions. Support color coding and could track up to 24hrs of data. 
+
+![Nightscout Module](https://github.com/bureus/MMM-Nightscout/blob/master/docs/screenshot-4.PNG)
+
+![Nightscout Module](https://github.com/bureus/MMM-Nightscout/blob/master/docs/screenshot-5.PNG)
 
 ## Configs retrived from Nightscout
 Supports both mmol/L and mg/dL
