@@ -29,6 +29,7 @@ modules: [
                 chartHeight: 850, //Optional: set char height in px. Default is 850px. 
                 chartHours: 4, //Optional: number of hours that chart tracks. Default is 4. 
                 renderChart: true  //Optional: set to false if you dont want to get a chart. Default is true.
+                extendedHeader: false //Option: set to false if you want to hide server title and last glucose value.
         }
     },
     ...

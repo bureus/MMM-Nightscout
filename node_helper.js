@@ -11,8 +11,6 @@ module.exports = NodeHelper.create({
     // --------------------------------------- Schedule a stands update
     scheduleUpdate: function (lastDate) {
         let self = this;
-        //let refreshRate = new Date(Date.now()) - new Date(lastDate).setMinutes(5);
-        //debug("Updating in: "+ refreshRate)
         this.updatetimer = setInterval(function () { // This timer is saved in uitimer so that we can cancel it
             self.update();
         }, 60000);

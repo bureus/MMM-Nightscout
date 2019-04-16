@@ -1,4 +1,3 @@
-
 Module.register("MMM-Nightscout", {
 
     // Default module config.
@@ -10,66 +9,20 @@ Module.register("MMM-Nightscout", {
         chartHeight: 850,
         chartHours: 4,
         renderChart: true,
-        serverTitle: false
+        extendedHeader: true
     },
 
     getScripts: function () {
         return ["modules/" + this.name + "/node_modules/chart.js/dist/Chart.bundle.min.js", "modules/" + this.name + "/node_modules/chartjs-plugin-annotation/chartjs-plugin-annotation.min.js"];
     },
 
-    getHeader: function(){
-        if(this.config.serverTitle && this.glucoseData.settings.customTitle){
-            return this.glucoseData.settings.customTitle;
-        }
-    },
-
     start: function () {
         Log.info("Starting module: " + this.name);
         this.origLineElement = Chart.elements.Line;
-        this.initChartDrawer(this.origLineElement);
         //Send config to node_helper
         Log.info("Send configs to node_helper..");
         this.sendSocketNotification("CONFIG", this.config);
         this.updateDom();
-    },
-
-    initChartDrawer: function (origLineElement) {
-        Log.info("initChartDrawer");
-        /*Chart.elements.Line = Chart.Element.extend({
-            draw: function () {
-                var vm = this._view;
-                var backgroundColors = this._chart.controller.data.datasets[this._datasetIndex].backgroundColor;
-                var points = this._children;
-                var ctx = this._chart.ctx;
-                var minX = points[0]._model.x;
-                var maxX = points[points.length - 1]._model.x;
-                var linearGradient = ctx.createLinearGradient(minX, 0, maxX, 0);
-
-                points.forEach(function (point, i) {
-                    var colorStopPosition = roundNumber((point._model.x - minX) / (maxX - minX), 2);
-
-                    if (i === 0) {
-                        linearGradient.addColorStop(0, backgroundColors[i]);
-                    } else {
-                        // only add a color stop if the color is different
-                        if (backgroundColors[i] !== backgroundColors[i - 1]) {
-                            // add a color stop for the prev color and for the new color at the same location
-                            // this gives a solid color gradient instead of a gradient that fades to the next color
-                            linearGradient.addColorStop(colorStopPosition, backgroundColors[i - 1]);
-                            linearGradient.addColorStop(colorStopPosition, backgroundColors[i]);
-                        }
-                    }
-                });
-
-                vm.backgroundColor = linearGradient;
-
-                origLineElement.prototype.draw.apply(this);
-            }
-        });
-
-        Chart.controllers.line = Chart.controllers.line.extend({
-            datasetElementType: Chart.elements.Line,
-        });*/
     },
 
     getDom: function () {
@@ -85,19 +38,30 @@ Module.register("MMM-Nightscout", {
             return wrapper;
         }
         if (this.glucoseData) {
-            wrapper.appendChild(this.getBS());
-
+            let head = document.createElement("div");
+            head.appendChild(this.getBS());
+            if(this.config.extendedHeader && this.glucoseData.settings.customTitle){
+                head.appendChild(this.getCustomTitle());
+            }
+            wrapper.appendChild(head);
             if (this.config.renderChart) {
-                /*wrapper.height = this.config.chartHeight+90;
-                wrapper.width = this.config.chartWidth;*/
                 wrapper.appendChild(this.getChart());
             }
             return wrapper;
         }
     },
 
+    getCustomTitle: function(){
+        let updatedTime = new Date(this.glucoseData.date);
+        let customTitle = document.createElement("div");
+        customTitle.style = "float: left;clear: none; padding-left: 10px;"
+        customTitle.innerHTML = "<span class='normal medium dimmed' style='display:block;'>"+this.glucoseData.settings.customTitle+"</span><span class='light small dimmed' style='display:block;'>"+updatedTime.toLocaleString()+"</span>";
+        return customTitle;
+    },
+
     getBS: function () {
         let div = document.createElement("div");
+        div.style = "float: left;clear: none;";
         let bs = document.createElement("div");
         bs.style = 'display: table;';
         let bsStyle = this.config.colorEnabled ? "display: table-cell;vertical-align:middle; color:" + this.glucoseData.fontColor + ";" : "display: table-cell;vertical-align:middle;";
