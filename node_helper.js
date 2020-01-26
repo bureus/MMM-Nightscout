@@ -9,7 +9,7 @@ module.exports = NodeHelper.create({
     this.started = false;
   },
   // --------------------------------------- Schedule a stands update
-  scheduleUpdate: function(lastDate) {
+  scheduleUpdate: function() {
     let self = this;
     this.updatetimer = setInterval(function() {
       // This timer is saved in uitimer so that we can cancel it
@@ -77,7 +77,7 @@ module.exports = NodeHelper.create({
           })
           .catch(function(error) {
             log("getGlucoseData: failed when trying to retrive data: " + error);
-            reject();
+            resolve();
           });
       } else {
         log("Missing configed base url");
@@ -85,7 +85,7 @@ module.exports = NodeHelper.create({
           "SERVICE_FAILURE",
           "Missing configed base url"
         );
-        reject();
+        resolve();
       }
     });
   },
@@ -94,17 +94,20 @@ module.exports = NodeHelper.create({
     let self = this;
     if (self.config.baseUrl && self.config.server.settings.units) {
       clearInterval(this.updatetimer); // Clear the timer so that we can set it again
-      self.glucoseData = await self.getGlucoseData();
-      let dto = generateDto(
-        self.glucoseData,
-        self.config.server.settings.units,
-        self.config.server.settings.thresholds,
-        self.config.server.settings
-      );
-      debug(JSON.stringify(dto));
-      debug("bs value is: " + dto.bs + " " + dto.unit);
-      self.sendSocketNotification("GLUCOSE", dto); // Send glucose data to presentation layer
-      self.scheduleUpdate(dto.date);
+      let glucoseData = await self.getGlucoseData();
+      if (glucoseData) {
+        self.glucoseData = glucoseData;
+        let dto = generateDto(
+          self.glucoseData,
+          self.config.server.settings.units,
+          self.config.server.settings.thresholds,
+          self.config.server.settings
+        );
+        debug(JSON.stringify(dto));
+        debug("bs value is: " + dto.bs + " " + dto.unit);
+        self.sendSocketNotification("GLUCOSE", dto); // Send glucose data to presentation layer
+      }
+      self.scheduleUpdate();
     } else {
       debug("update: missing needed configs");
     }
