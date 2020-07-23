@@ -15,6 +15,7 @@
 2. Run ``npm install`` inside ``../modules/MMM-Nightscout/`` folder
 
 ## Configuration
+MMM-Nighscout works with any public hosted Nightscout instance. Important is to verify that your instance is accessible over the public internet by visiting http(s)://YOURSITE (Example Azure: https://YOURSITENAMEHERE.azurewebsites.net or Heroku: https://YOURSITENAMEHERE.herokuapp.com). Please also verify that your site is showing your data as well before proceeding.
 ```
 modules: [
     ...
@@ -23,11 +24,11 @@ modules: [
             position: "top_left",
             config: {
                 debug: true, //Optional: set to true if you want debug logs
-                baseUrl: 'https://nightscout.azurewebsites.net' //Required: Base url to your Nightscout webapplication. Please make sure to not have any traling /
-                colorEnabled: true //Optional: set to true if you want to get colorful bs values. Default is false.
+                baseUrl: 'https://YOURSITENAMEHERE.azurewebsites.net', //Required: Base url to your Nightscout webapplication. Please make sure to not have any traling /
+                colorEnabled: true, //Optional: set to true if you want to get colorful bs values. Default is false.
                 chartWidth: 350,  //Optional: set chart width in px. Default is 350px.
                 chartHours: 4, //Optional: number of hours that chart tracks. Default is 4. 
-                renderChart: true  //Optional: set to false if you dont want to get a chart. Default is true.
+                renderChart: true,  //Optional: set to false if you dont want to get a chart. Default is true.
                 extendedHeader: false //Option: set to false if you want to hide server title and last glucose value.
         }
     },
