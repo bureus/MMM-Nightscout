@@ -7,6 +7,7 @@ Module.register("MMM-Nightscout", {
     chartWidth: 350,
     chartHours: 4,
     renderChart: true,
+    token: false,
     extendedHeader: true
   },
 

@@ -21,9 +21,13 @@ module.exports = NodeHelper.create({
     let self = this;
     return new Promise(resolve => {
       if (self.config.baseUrl) {
+        let statusUrl = "/api/v1/status";
+        if (self.config.token) {
+          statusUrl = statusUrl + "?token=" + self.config.token;
+        }
         let options = {
           method: "GET",
-          uri: this.config.baseUrl + "/api/v1/status",
+          uri: this.config.baseUrl + statusUrl,
           headers: {
             Accept: "application/json"
           }
@@ -61,12 +65,17 @@ module.exports = NodeHelper.create({
     let self = this;
     return new Promise(resolve => {
       if (self.config.baseUrl) {
+        // *12 since data is updated every 5 minutes, meaning we get 12 values every hour.
+        let entriesUrl = "/api/v1/entries.json?count=" + self.config.chartHours*12;
+
+        if (self.config.token) {
+          entriesUrl = entriesUrl + "&token=" + self.config.token;
+        }
         let options = {
           method: "GET",
           uri:
-            this.config.baseUrl +
-            "/api/v1/entries.json?count=" +
-            this.config.chartHours * 12
+            self.config.baseUrl +
+            entriesUrl
         };
 
         request(options)

@@ -16,6 +16,12 @@
 
 ## Configuration
 MMM-Nighscout works with any public hosted Nightscout instance. Important is to verify that your instance is accessible over the public internet by visiting http(s)://YOURSITE (Example Azure: https://YOURSITENAMEHERE.azurewebsites.net or Heroku: https://YOURSITENAMEHERE.herokuapp.com). Please also verify that your site is showing your data as well before proceeding.
+
+
+It is possible to use tokens for authenticating as well. The following is needed to set it up:
+1. Create a role with "api:*:read" as permissions.
+2. Create a subject and set it to use the role created in step 1.
+3. Copy the "Access token" from step 2 and paste into the config.js file in the "token" field.
 ```
 modules: [
     ...
@@ -29,6 +35,7 @@ modules: [
                 chartWidth: 350,  //Optional: set chart width in px. Default is 350px.
                 chartHours: 4, //Optional: number of hours that chart tracks. Default is 4. 
                 renderChart: true,  //Optional: set to false if you dont want to get a chart. Default is true.
+                token: false, //Optional: use a token to authenticate against the Nightscout server.
                 extendedHeader: false //Option: set to false if you want to hide server title and last glucose value.
         }
     },
