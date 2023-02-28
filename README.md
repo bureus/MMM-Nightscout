@@ -36,6 +36,7 @@ modules: [
                 chartHours: 4, //Optional: number of hours that chart tracks. Default is 4. 
                 renderChart: true,  //Optional: set to false if you dont want to get a chart. Default is true.
                 token: false, //Optional: use a token to authenticate against the Nightscout server.
+                showTIR: false, //Optional: set to true if you want to display TIR for the last <chartHours> number of hours.
                 extendedHeader: false //Option: set to false if you want to hide server title and last glucose value.
         }
     },
@@ -44,29 +45,33 @@ modules: [
 ```
 
 ## Chart
-Nightscout similare chart that has fully configurable dimansions. Support color coding and could track up to 24hrs of data. 
+Nightscout similar chart that has fully configurable dimensions. Support for color coding and possibility of tracking up to 24hrs of data.
 
-![Nightscout Module](https://github.com/bureus/MMM-Nightscout/blob/master/docs/screenshot-4.PNG)
+![Nightscout Module](docs/screenshot-4.PNG)
 
-![Nightscout Module](https://github.com/bureus/MMM-Nightscout/blob/master/docs/screenshot-5.PNG)
+![Nightscout Module](docs/screenshot-5.PNG)
 
-## Configs retrived from Nightscout
+Time in range calculation for displayed chart.
+
+![Nightscout Module](docs/time_in_range.png)
+
+## Configs retrieved from Nightscout
 Supports both mmol/L and mg/dL
 
 mmol/L
 
-![Nightscout Module](https://github.com/bureus/MMM-Nightscout/blob/master/docs/screenshot.PNG)
+![Nightscout Module](docs/screenshot.PNG)
 
 mg/dL
 
-![Nightscout Module](https://github.com/bureus/MMM-Nightscout/blob/master/docs/screenshot-2.PNG)
+![Nightscout Module](docs/screenshot-2.PNG)
 
 ## Color theme
 Set colorEnabled = true to render blood glucose level based on Nightscout thresholds (critical, warning, normal). Default is false. 
 
-![Nightscout Module](https://github.com/bureus/MMM-Nightscout/blob/master/docs/screenshot-3.PNG)
+![Nightscout Module](docs/screenshot-3.PNG)
 
 
 ## Screenshot
 
-![Nightscout Module](https://github.com/bureus/MMM-Nightscout/blob/master/docs/screenshot.PNG)
+![Nightscout Module](docs/screenshot.PNG)

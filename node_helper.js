@@ -187,6 +187,7 @@ function generateDto(data, unit, thresholds, settings) {
     trend: data[0].trend,
     direction: directionToUnicode(data[0].direction),
     fontColor: getFontColor(data[0].sgv, thresholds),
+    TIR: "TIR: " + getTIR(data, thresholds) + "%",
     data: getCharDataSet(data, unit == "mmol", thresholds),
     settings: settings
   };
@@ -202,6 +203,27 @@ function getFontColor(sgv, thresholds, isChart) {
   }
   return isChart ? "rgb(255, 255, 0)" : "#FFFF33";
 }
+
+
+function getTIR(data, thresholds) {
+  log("Getting Time-In-Range");
+
+  let inRange = 0;
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].sgv <= thresholds.bgTargetTop &&
+        data[i].sgv >= thresholds.bgTargetBottom) {
+      inRange++;
+    }
+  }
+  if (data.length != 0) {
+    return Math.floor(1000*inRange/data.length)/10;
+
+  }
+  else {
+    return 0;
+  }
+}
+
 
 function getCharDataSet(data, convert, thresholds) {
   debug(
