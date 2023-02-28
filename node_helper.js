@@ -37,7 +37,7 @@ module.exports = NodeHelper.create({
           .then(function(body) {
             let config = JSON.parse(body);
             debug(
-              "getServerConfig: data retrived, units is" +
+              "getServerConfig: data retrieved, units is " +
                 config.settings.units +
                 ", status is: " +
                 config.status
@@ -46,7 +46,7 @@ module.exports = NodeHelper.create({
           })
           .catch(function(error) {
             log(
-              "getServerConfig: failed when trying to retrive data: " + error
+              "getServerConfig: failed when trying to retrieve data: " + error
             );
             reject();
           });
@@ -81,18 +81,18 @@ module.exports = NodeHelper.create({
         request(options)
           .then(function(body) {
             let glucoseData = JSON.parse(body);
-            debug("getGlucoseData: data retrived");
+            debug("getGlucoseData: data retrieved");
             resolve(glucoseData);
           })
           .catch(function(error) {
-            log("getGlucoseData: failed when trying to retrive data: " + error);
+            log("getGlucoseData: failed when trying to retrieve data: " + error);
             resolve();
           });
       } else {
-        log("Missing configed base url");
+        log("Missing base url in configuration");
         self.sendSocketNotification(
           "SERVICE_FAILURE",
-          "Missing configed base url"
+          "Missing base url in configuration"
         );
         resolve();
       }
