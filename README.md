@@ -36,6 +36,7 @@ modules: [
                 chartHours: 4, //Optional: number of hours that chart tracks. Default is 4. 
                 renderChart: true,  //Optional: set to false if you dont want to get a chart. Default is true.
                 token: false, //Optional: use a token to authenticate against the Nightscout server.
+                showTIR: false, //Optional: set to true if you want to display TIR for the last <chartHours> number of hours.
                 extendedHeader: false //Option: set to false if you want to hide server title and last glucose value.
         }
     },

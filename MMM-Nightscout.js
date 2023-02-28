@@ -8,6 +8,7 @@ Module.register("MMM-Nightscout", {
     chartHours: 4,
     renderChart: true,
     token: false,
+    showTIR: false,
     extendedHeader: true
   },
 
@@ -48,7 +49,9 @@ Module.register("MMM-Nightscout", {
       let head = document.createElement("div");
       head.appendChild(this.getBS());
       if (this.config.extendedHeader && this.glucoseData.settings.customTitle) {
-        head.appendChild(this.getCustomTitle());
+        head.appendChild(this.getCustomTitle(this.glucoseData.settings.customTitle));
+      } else if(this.config.showTIR) {
+        head.appendChild(this.getCustomTitle(this.glucoseData.TIR));
       }
       wrapper.appendChild(head);
       if (this.config.renderChart) {
@@ -58,18 +61,20 @@ Module.register("MMM-Nightscout", {
     }
   },
 
-  getCustomTitle: function() {
+
+  getCustomTitle: function(title) {
     let updatedTime = new Date(this.glucoseData.date);
     let customTitle = document.createElement("div");
     customTitle.style = "float: left;clear: none; padding-left: 10px;";
     customTitle.innerHTML =
       "<span class='normal medium dimmed' style='display:block;'>" +
-      this.glucoseData.settings.customTitle +
+      title +
       "</span><span class='light small dimmed' style='display:block;'>" +
       updatedTime.toLocaleString() +
       "</span>";
     return customTitle;
   },
+
 
   getBS: function() {
     let div = document.createElement("div");
