@@ -11,7 +11,7 @@ module.exports = NodeHelper.create({
   // --------------------------------------- Schedule a stands update
   scheduleUpdate: function() {
     let self = this;
-    this.updatetimer = setInterval(function() {
+    self.updatetimer = setInterval(function() {
       // This timer is saved in uitimer so that we can cancel it
       self.update();
     }, 60000);
@@ -27,7 +27,7 @@ module.exports = NodeHelper.create({
         }
         let options = {
           method: "GET",
-          uri: this.config.baseUrl + statusUrl,
+          uri: self.config.baseUrl + statusUrl,
           headers: {
             Accept: "application/json"
           }
@@ -102,7 +102,7 @@ module.exports = NodeHelper.create({
   update: async function() {
     let self = this;
     if (self.config.baseUrl && self.config.server.settings.units) {
-      clearInterval(this.updatetimer); // Clear the timer so that we can set it again
+      clearInterval(self.updatetimer); // Clear the timer so that we can set it again
       let glucoseData = await self.getGlucoseData();
       if (glucoseData) {
         self.glucoseData = glucoseData;
@@ -140,9 +140,9 @@ module.exports = NodeHelper.create({
     log("socketNotificationReceived");
     if (notification === "CONFIG") {
       log("CONFIG event received");
-      this.config = payload;
-      this.debugMe = this.config.debug;
-      this.started = true;
+      self.config = payload;
+      self.debugMe = self.config.debug;
+      self.started = true;
       self.init();
     }
   }
