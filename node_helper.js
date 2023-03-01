@@ -193,6 +193,7 @@ function generateDto(data, unit, thresholds, settings) {
     direction: directionToUnicode(data[0].direction),
     fontColor: getFontColor(data[0].sgv, thresholds),
     TIR: "TIR: " + getTIR(data, thresholds) + "%",
+    thresholds: getThresholds(unit, thresholds),
     data: getCharDataSet(data, unit == "mmol", thresholds),
     settings: settings
   };
@@ -227,6 +228,26 @@ function getTIR(data, thresholds) {
   else {
     return 0;
   }
+}
+
+function getThresholds(units, thresholds) {
+  let bgHigh = thresholds.bgHigh;
+  let bgLow = thresholds.bgLow;
+  let targetTop = thresholds.bgTargetTop;
+  let targetBottom = thresholds.bgTargetBottom;
+
+  if (units == "mmol") {
+    bgHigh = convertSvgToMmol(bgHigh);
+    bgLow = convertSvgToMmol(bgLow);
+    targetTop = convertSvgToMmol(targetTop);
+    targetBottom = convertSvgToMmol(targetBottom);
+  }
+
+  return {
+    bgHigh : bgHigh,
+    bgLow : bgLow,
+    targetTop : targetTop,
+    targetBottom : targetBottom };
 }
 
 

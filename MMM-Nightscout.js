@@ -118,6 +118,12 @@ Module.register("MMM-Nightscout", {
       units = this.config.units;
     }
 
+    // Get high, low and target thresholds from server
+    let bgHigh       = this.glucoseData.thresholds.bgHigh;
+    let bgLow        = this.glucoseData.thresholds.bgLow;
+    let targetTop    = this.glucoseData.thresholds.targetTop;
+    let targetBottom = this.glucoseData.thresholds.targetBottom;
+
     chartWrapper.style =
       "position: relative; display: inline-block; width:" +
       this.config.chartWidth +
@@ -147,11 +153,12 @@ Module.register("MMM-Nightscout", {
         annotation: {
           annotations: [
             {
+              // BG low
               borderDash: [3],
               type: "line",
               mode: "horizontal",
               scaleID: "y-axis-0",
-              value: this.glucoseData.unit == "mmol" ? 3 : 60,
+              value: bgLow,
               borderColor: "rgba(242, 241, 239, 0.5)",
               borderWidth: 1,
               label: {
@@ -159,11 +166,12 @@ Module.register("MMM-Nightscout", {
               }
             },
             {
+              // BG high
               borderDash: [3],
               type: "line",
               mode: "horizontal",
               scaleID: "y-axis-0",
-              value: this.glucoseData.unit == "mmol" ? 14 : 260,
+              value: bgHigh,
               borderColor: "rgba(242, 241, 239, 0.5)",
               borderWidth: 1,
               label: {
@@ -171,11 +179,12 @@ Module.register("MMM-Nightscout", {
               }
             },
             {
+              // Target range low
               borderDash: [10],
               type: "line",
               mode: "horizontal",
               scaleID: "y-axis-0",
-              value: this.glucoseData.unit == "mmol" ? 4.2 : 80,
+              value: targetBottom,
               borderColor: "rgba(242, 241, 239, 0.5)",
               borderWidth: 1,
               label: {
@@ -183,11 +192,12 @@ Module.register("MMM-Nightscout", {
               }
             },
             {
+              // Target range high
               borderDash: [10],
               type: "line",
               mode: "horizontal",
               scaleID: "y-axis-0",
-              value: this.glucoseData.unit == "mmol" ? 10 : 170,
+              value: targetTop,
               borderColor: "rgba(242, 241, 239, 0.5)",
               borderWidth: 1,
               label: {
