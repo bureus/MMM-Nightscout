@@ -9,6 +9,7 @@ Module.register("MMM-Nightscout", {
     renderChart: true,
     token: false,
     showTIR: false,
+    units: false,
     extendedHeader: true
   },
 
@@ -97,16 +98,26 @@ Module.register("MMM-Nightscout", {
     div.appendChild(bs);
     let delta = document.createElement("div");
     delta.className = "light small dimmed";
+    let units = this.glucoseData.unit;
+    if (this.config.units) {
+      units = this.config.units;
+    }
     delta.innerHTML =
       this.glucoseData.delta +
       " " +
-      (this.glucoseData.unit == "mmol" ? "mmol/L" : "mg/dL");
+      (units == "mmol" ? "mmol/L" : "mg/dL");
     div.appendChild(delta);
     return div;
   },
 
   getChart: function() {
     let chartWrapper = document.createElement("div");
+
+    let units = this.glucoseData.unit;
+    if (this.config.units) {
+      units = this.config.units;
+    }
+
     chartWrapper.style =
       "position: relative; display: inline-block; width:" +
       this.config.chartWidth +
@@ -222,14 +233,14 @@ Module.register("MMM-Nightscout", {
               typ: "logarithmic",
               ticks: {
                 beginAtZero: true,
-                max: this.glucoseData.unit == "mmol" ? 18 : 400,
-                min: this.glucoseData.unit == "mmol" ? 2 : 30
+                max: units == "mmol" ? 18 : 400,
+                min: units == "mmol" ? 2 : 30
               },
               display: true,
               scaleLabel: {
                 display: true,
                 labelString:
-                  this.glucoseData.unit == "mmol" ? "mmol/L" : "mg/dL"
+                  units == "mmol" ? "mmol/L" : "mg/dL"
               }
             }
           ]

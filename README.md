@@ -37,6 +37,7 @@ modules: [
                 renderChart: true,  //Optional: set to false if you dont want to get a chart. Default is true.
                 token: false, //Optional: use a token to authenticate against the Nightscout server.
                 showTIR: false, //Optional: set to true if you want to display TIR for the last <chartHours> number of hours.
+                units: false, //Optional: set to "mmol" to overwrite server settings and display data in mmol/L in case setting isn't read properly.
                 extendedHeader: false //Option: set to false if you want to hide server title and last glucose value.
         }
     },

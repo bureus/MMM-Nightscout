@@ -106,9 +106,14 @@ module.exports = NodeHelper.create({
       let glucoseData = await self.getGlucoseData();
       if (glucoseData) {
         self.glucoseData = glucoseData;
+        let units = self.config.server.settings.units;
+        if (self.config.units) {
+          // If unit is set in configuration, overwrite server setting.
+          units = self.config.units;
+        }
         let dto = generateDto(
           self.glucoseData,
-          self.config.server.settings.units,
+          units,
           self.config.server.settings.thresholds,
           self.config.server.settings
         );
