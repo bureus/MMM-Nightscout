@@ -7,6 +7,9 @@ Module.register("MMM-Nightscout", {
     chartWidth: 350,
     chartHours: 4,
     renderChart: true,
+    token: false,
+    showTIR: false,
+    units: false,
     extendedHeader: true
   },
 
@@ -47,7 +50,9 @@ Module.register("MMM-Nightscout", {
       let head = document.createElement("div");
       head.appendChild(this.getBS());
       if (this.config.extendedHeader && this.glucoseData.settings.customTitle) {
-        head.appendChild(this.getCustomTitle());
+        head.appendChild(this.getCustomTitle(this.glucoseData.settings.customTitle));
+      } else if(this.config.showTIR) {
+        head.appendChild(this.getCustomTitle(this.glucoseData.TIR));
       }
       wrapper.appendChild(head);
       if (this.config.renderChart) {
@@ -57,18 +62,20 @@ Module.register("MMM-Nightscout", {
     }
   },
 
-  getCustomTitle: function() {
+
+  getCustomTitle: function(title) {
     let updatedTime = new Date(this.glucoseData.date);
     let customTitle = document.createElement("div");
     customTitle.style = "float: left;clear: none; padding-left: 10px;";
     customTitle.innerHTML =
       "<span class='normal medium dimmed' style='display:block;'>" +
-      this.glucoseData.settings.customTitle +
+      title +
       "</span><span class='light small dimmed' style='display:block;'>" +
       updatedTime.toLocaleString() +
       "</span>";
     return customTitle;
   },
+
 
   getBS: function() {
     let div = document.createElement("div");
@@ -91,16 +98,32 @@ Module.register("MMM-Nightscout", {
     div.appendChild(bs);
     let delta = document.createElement("div");
     delta.className = "light small dimmed";
+    let units = this.glucoseData.unit;
+    if (this.config.units) {
+      units = this.config.units;
+    }
     delta.innerHTML =
       this.glucoseData.delta +
       " " +
-      (this.glucoseData.unit == "mmol" ? "mmol/L" : "mg/dL");
+      (units == "mmol" ? "mmol/L" : "mg/dL");
     div.appendChild(delta);
     return div;
   },
 
   getChart: function() {
     let chartWrapper = document.createElement("div");
+
+    let units = this.glucoseData.unit;
+    if (this.config.units) {
+      units = this.config.units;
+    }
+
+    // Get high, low and target thresholds from server
+    let bgHigh       = this.glucoseData.thresholds.bgHigh;
+    let bgLow        = this.glucoseData.thresholds.bgLow;
+    let targetTop    = this.glucoseData.thresholds.targetTop;
+    let targetBottom = this.glucoseData.thresholds.targetBottom;
+
     chartWrapper.style =
       "position: relative; display: inline-block; width:" +
       this.config.chartWidth +
@@ -130,11 +153,12 @@ Module.register("MMM-Nightscout", {
         annotation: {
           annotations: [
             {
+              // BG low
               borderDash: [3],
               type: "line",
               mode: "horizontal",
               scaleID: "y-axis-0",
-              value: this.glucoseData.unit == "mmol" ? 3 : 60,
+              value: bgLow,
               borderColor: "rgba(242, 241, 239, 0.5)",
               borderWidth: 1,
               label: {
@@ -142,11 +166,12 @@ Module.register("MMM-Nightscout", {
               }
             },
             {
+              // BG high
               borderDash: [3],
               type: "line",
               mode: "horizontal",
               scaleID: "y-axis-0",
-              value: this.glucoseData.unit == "mmol" ? 14 : 260,
+              value: bgHigh,
               borderColor: "rgba(242, 241, 239, 0.5)",
               borderWidth: 1,
               label: {
@@ -154,11 +179,12 @@ Module.register("MMM-Nightscout", {
               }
             },
             {
+              // Target range low
               borderDash: [10],
               type: "line",
               mode: "horizontal",
               scaleID: "y-axis-0",
-              value: this.glucoseData.unit == "mmol" ? 4.2 : 80,
+              value: targetBottom,
               borderColor: "rgba(242, 241, 239, 0.5)",
               borderWidth: 1,
               label: {
@@ -166,11 +192,12 @@ Module.register("MMM-Nightscout", {
               }
             },
             {
+              // Target range high
               borderDash: [10],
               type: "line",
               mode: "horizontal",
               scaleID: "y-axis-0",
-              value: this.glucoseData.unit == "mmol" ? 10 : 170,
+              value: targetTop,
               borderColor: "rgba(242, 241, 239, 0.5)",
               borderWidth: 1,
               label: {
@@ -216,14 +243,14 @@ Module.register("MMM-Nightscout", {
               typ: "logarithmic",
               ticks: {
                 beginAtZero: true,
-                max: this.glucoseData.unit == "mmol" ? 18 : 400,
-                min: this.glucoseData.unit == "mmol" ? 2 : 30
+                max: units == "mmol" ? 18 : 400,
+                min: units == "mmol" ? 2 : 30
               },
               display: true,
               scaleLabel: {
                 display: true,
                 labelString:
-                  this.glucoseData.unit == "mmol" ? "mmol/L" : "mg/dL"
+                  units == "mmol" ? "mmol/L" : "mg/dL"
               }
             }
           ]

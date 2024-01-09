@@ -11,7 +11,7 @@ module.exports = NodeHelper.create({
   // --------------------------------------- Schedule a stands update
   scheduleUpdate: function() {
     let self = this;
-    this.updatetimer = setInterval(function() {
+    self.updatetimer = setInterval(function() {
       // This timer is saved in uitimer so that we can cancel it
       self.update();
     }, 60000);
@@ -21,9 +21,13 @@ module.exports = NodeHelper.create({
     let self = this;
     return new Promise(resolve => {
       if (self.config.baseUrl) {
+        let statusUrl = "/api/v1/status";
+        if (self.config.token) {
+          statusUrl = statusUrl + "?token=" + self.config.token;
+        }
         let options = {
           method: "GET",
-          uri: this.config.baseUrl + "/api/v1/status",
+          uri: self.config.baseUrl + statusUrl,
           headers: {
             Accept: "application/json"
           }
@@ -33,7 +37,7 @@ module.exports = NodeHelper.create({
           .then(function(body) {
             let config = JSON.parse(body);
             debug(
-              "getServerConfig: data retrived, units is" +
+              "getServerConfig: data retrieved, units is " +
                 config.settings.units +
                 ", status is: " +
                 config.status
@@ -42,7 +46,7 @@ module.exports = NodeHelper.create({
           })
           .catch(function(error) {
             log(
-              "getServerConfig: failed when trying to retrive data: " + error
+              "getServerConfig: failed when trying to retrieve data: " + error
             );
             reject();
           });
@@ -61,29 +65,34 @@ module.exports = NodeHelper.create({
     let self = this;
     return new Promise(resolve => {
       if (self.config.baseUrl) {
+        // *12 since data is updated every 5 minutes, meaning we get 12 values every hour.
+        let entriesUrl = "/api/v1/entries.json?count=" + self.config.chartHours*12;
+
+        if (self.config.token) {
+          entriesUrl = entriesUrl + "&token=" + self.config.token;
+        }
         let options = {
           method: "GET",
           uri:
-            this.config.baseUrl +
-            "/api/v1/entries.json?count=" +
-            this.config.chartHours * 12
+            self.config.baseUrl +
+            entriesUrl
         };
 
         request(options)
           .then(function(body) {
             let glucoseData = JSON.parse(body);
-            debug("getGlucoseData: data retrived");
+            debug("getGlucoseData: data retrieved");
             resolve(glucoseData);
           })
           .catch(function(error) {
-            log("getGlucoseData: failed when trying to retrive data: " + error);
+            log("getGlucoseData: failed when trying to retrieve data: " + error);
             resolve();
           });
       } else {
-        log("Missing configed base url");
+        log("Missing base url in configuration");
         self.sendSocketNotification(
           "SERVICE_FAILURE",
-          "Missing configed base url"
+          "Missing base url in configuration"
         );
         resolve();
       }
@@ -93,13 +102,18 @@ module.exports = NodeHelper.create({
   update: async function() {
     let self = this;
     if (self.config.baseUrl && self.config.server.settings.units) {
-      clearInterval(this.updatetimer); // Clear the timer so that we can set it again
+      clearInterval(self.updatetimer); // Clear the timer so that we can set it again
       let glucoseData = await self.getGlucoseData();
       if (glucoseData) {
         self.glucoseData = glucoseData;
+        let units = self.config.server.settings.units;
+        if (self.config.units) {
+          // If unit is set in configuration, overwrite server setting.
+          units = self.config.units;
+        }
         let dto = generateDto(
           self.glucoseData,
-          self.config.server.settings.units,
+          units,
           self.config.server.settings.thresholds,
           self.config.server.settings
         );
@@ -126,9 +140,9 @@ module.exports = NodeHelper.create({
     log("socketNotificationReceived");
     if (notification === "CONFIG") {
       log("CONFIG event received");
-      this.config = payload;
-      this.debugMe = this.config.debug;
-      this.started = true;
+      self.config = payload;
+      self.debugMe = self.config.debug;
+      self.started = true;
       self.init();
     }
   }
@@ -178,6 +192,8 @@ function generateDto(data, unit, thresholds, settings) {
     trend: data[0].trend,
     direction: directionToUnicode(data[0].direction),
     fontColor: getFontColor(data[0].sgv, thresholds),
+    TIR: "TIR: " + getTIR(data, thresholds) + "%",
+    thresholds: getThresholds(unit, thresholds),
     data: getCharDataSet(data, unit == "mmol", thresholds),
     settings: settings
   };
@@ -193,6 +209,47 @@ function getFontColor(sgv, thresholds, isChart) {
   }
   return isChart ? "rgb(255, 255, 0)" : "#FFFF33";
 }
+
+
+function getTIR(data, thresholds) {
+  log("Getting Time-In-Range");
+
+  let inRange = 0;
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].sgv <= thresholds.bgTargetTop &&
+        data[i].sgv >= thresholds.bgTargetBottom) {
+      inRange++;
+    }
+  }
+  if (data.length != 0) {
+    return Math.floor(1000*inRange/data.length)/10;
+
+  }
+  else {
+    return 0;
+  }
+}
+
+function getThresholds(units, thresholds) {
+  let bgHigh = thresholds.bgHigh;
+  let bgLow = thresholds.bgLow;
+  let targetTop = thresholds.bgTargetTop;
+  let targetBottom = thresholds.bgTargetBottom;
+
+  if (units == "mmol") {
+    bgHigh = convertSvgToMmol(bgHigh);
+    bgLow = convertSvgToMmol(bgLow);
+    targetTop = convertSvgToMmol(targetTop);
+    targetBottom = convertSvgToMmol(targetBottom);
+  }
+
+  return {
+    bgHigh : bgHigh,
+    bgLow : bgLow,
+    targetTop : targetTop,
+    targetBottom : targetBottom };
+}
+
 
 function getCharDataSet(data, convert, thresholds) {
   debug(
